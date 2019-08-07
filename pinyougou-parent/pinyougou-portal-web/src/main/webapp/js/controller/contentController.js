@@ -1,0 +1,11 @@
+app.controller("contentController",function($scope,contentService){
+	$scope.contentList=[];
+	$scope.findByCotegoryId=function(cotegoryId){
+		contentService.findByCotegoryId(cotegoryId).success(function(response){
+			$scope.contentList[cotegoryId]=response;
+		})
+	}
+	$scope.search=function(){
+		location.href="http://localhost:9104/search.html#?keywords="+$scope.keywords;
+	}
+})

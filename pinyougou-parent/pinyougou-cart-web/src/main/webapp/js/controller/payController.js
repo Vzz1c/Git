@@ -1,0 +1,32 @@
+app.controller("payController",function($scope,payService,$location){
+	$scope.createNative=function(){
+		payService.createNative().success(function(response){
+			$scope.money=(response.total_fee/100).toFixed(2);
+			$scope.out_trade_no=response.out_trade_no;
+			$scope.code_url=response.code_url;
+			var qr= new QRious({
+				element:document.getElementById("qrious"),
+				size:500,
+				value:response.code_url,
+				level:"H"
+			});
+			queryPayStatus();
+		})
+	}
+	queryPayStatus=function(){
+		payService.queryPayStatus($scope.out_trade_no).success(function(response){
+			if(response.success){
+				location.href="paysuccess.html#?money="+$scope.money;
+			}else{
+				if(response.message=="二维码超时"){
+					alert("二维码超时");
+					$scope.message="二维码已过期，点击图片重新获取二维码。"
+				}
+				location.href="payfail.html"
+			}
+		})
+	}
+	$scope.getMoney=function(){
+		return	$location.search()["money"];
+	}
+})
